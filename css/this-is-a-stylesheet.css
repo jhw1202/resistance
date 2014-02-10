@@ -6,3 +6,7 @@
 #start-game{
   margin-top: 96px;
 }
+
+.num-of-players{
+  display: none;
+}

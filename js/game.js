@@ -1,42 +1,61 @@
 window.App = {}
 App.Models = {}
+App.current = {}
 $(document).ready(function(){
   $("#start-game").click(function(){
+    $('.landing').hide()
+    $(".num-of-players").show()
+  })
 
+  $("#submit-num-players").click(function(){
+    $(".num-of-players").hide()
+    var numPlayers = parseInt($("#num-players option:selected").val())
+    App.current.game = new App.Models.Game({numPlayers: numPlayers})
   })
 })
 
-var Game = Backbone.Model.extend({
+App.Models.Game = Backbone.Model.extend({
   initialize: function(gameData){
     this.numPlayers = gameData.numPlayers
     this.numSpies = this.getNumSpies()
     this.numResistance = this.numPlayers - this.numSpies
     this.resistanceScore = 0
     this.spyScore = 0
+    this.rejectionCount = 0
+  },
+
+  resetRejection: function() {
+    this.rejectionCount = 0
+  },
+
+  addRejection: function() {
+    this.rejectionCount += 1
   },
 
   getNumSpies: function(){
+    var numSpies
     switch(this.numPlayers)
     {
     case 5:
-      this.numSpies = 2
+      numSpies = 2
       break
     case 6:
-      this.numSpies = 2
+      numSpies = 2
       break
     case 7:
-      this.numSpies = 3
+      numSpies = 3
       break
     case 8:
-      this.numSpies = 3
+      numSpies = 3
       break
     case 9:
-      this.numSpies = 3
+      numSpies = 3
       break
     case 10:
-      this.numSpies = 4
+      numSpies = 4
       break
     }
+    return numSpies
   }
 })
 
@@ -68,8 +87,15 @@ var Mission = Backbone.Model.extend({
 })
 
 var Round = Backbone.Model.extend({
-  initialize: function(roundData) {
-    this.members = roundData.members
+  initialize: function() {
+  },
+
+  approved: function() {
+    App.Models.Game.resetRejection()
+  },
+
+  denied: function() {
+    App.Models.Game.addRejection()
   }
 })
 
