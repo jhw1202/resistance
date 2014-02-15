@@ -11,6 +11,8 @@
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/backbone.min.js"></script>
 
+    <script type="text/javascript" src="js/missionPlayerNumbers.js"></script>
+    <script type="text/javascript" src="js/ui.js"></script>
     <script type="text/javascript" src="js/game.js"></script>
   </head>
   <body>
@@ -32,6 +34,66 @@
         </select>
         <button id='submit-num-players' class= 'btn btn-primary'>Continue</button>
       </div>
+
+      <div class="player-names">
+        <h1>Enter player names in clockwise order, hit return</h1>
+        <div>
+          <div id="player-names">
+            <ul id="names-list">
+
+            </ul>
+          </div>
+          <label>Name</label>
+          <input type='text' id='player-name'></input>
+        </div>
+
+        <button class='btn btn-primary' id="names-entered">Continue</button>
+      </div>
+
+      <div class="find-out">
+        <h1><span class='name'></span>, find out your identity</h1>
+
+        <div class="individual-identity">
+          <button class='btn btn-danger reveal-identity'>Click here if you dare</button>
+          <p class='identity'>
+            <p>When you're done, click Continue and pass to the player to the left.</p>
+          </p>
+
+          <button class='btn btn-primary pass-to-left'>Continue</button>
+        </div>
+      </div>
+
+      <div class="mission-vote">
+        <div>
+          Rejection Count is currently <span class='rejection-count'></span>. Five rejections and spies automatically win.
+        </div>
+        <p>
+          Mission <span class='mission-number'></span>: <span class='mission-players-num'></span> players
+        </p>
+        <p>
+          Mission requires <span class='fails-required'></span> fails. Wink wink, you spies.
+        </p>
+        <p>
+          <span class="mission-leader"></span> is the leader of this mission. Choose the players who you trust for this mission.
+        </p>
+        <p>
+          Does the group approve?
+        </p>
+        <button class='btn btn-primary mission-yes'>Yay</button>
+        <button class='btn btn-danger mission-no'>Nay</button>
+      </div>
+
+      <div class="select-mission-members">
+        Select players to go on this mission:
+        <ul id='mission-players-list'>
+        </ul>
+        <button class='btn btn-primary' disabled='disabled'></button>
+      </div>
+
+      <div class="mission-approve">
+      </div>
+
+
     </div>
   </body>
 </html>

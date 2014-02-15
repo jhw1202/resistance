@@ -3,10 +3,27 @@
   max-height: 800px;
 }
 
+.container > div {
+  display: none;
+  text-align: center;
+}
+
 #start-game{
   margin-top: 96px;
 }
 
-.num-of-players{
+#player-names{
+  min-height: 100px;
+}
+
+ul {
+  list-style-type: none;
+}
+
+#names-entered{
+  display: none;
+}
+
+.identity{
   display: none;
 }
