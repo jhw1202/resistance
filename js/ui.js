@@ -58,7 +58,7 @@ $(document).ready(function(){
   })
 
   $(".mission-yes").click(function(){
-
+    App.current.game.missionApproved()
   })
 
 })

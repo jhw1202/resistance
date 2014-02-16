@@ -49,7 +49,6 @@ $(document).ready(function(){
       $(".mission-vote").show()
       this.currentMission = new App.Models.Mission({missionNum: this.missionCount})
       var currentLeader = App.current.players.currentLeader
-      debugger
       $(".rejection-count").text(this.rejectionCount)
       $(".mission-number").text(this.missionCount)
       $(".mission-players-num").text(this.currentMission.numMembers)
@@ -63,7 +62,43 @@ $(document).ready(function(){
       $(".rejection-count").text(this.rejectionCount)
       $(".mission-number").text(this.missionCount)
       $(".mission-leader").text(currentLeader.name)
-    }
+    },
+
+    missionApproved: function() {
+      var _this = this
+      $(".mission-vote").hide()
+      $(".select-mission-members").show()
+      $(".mission-member-count").text(this.currentMission.numMembers)
+      _.each(App.current.players.models, function(player){
+        $("#mission-players-list").append("<div class='select-mission-member' " + "playerId='" + player.id +
+                                          "'>" + player.name + "</div>")
+      })
+
+      $(".select-mission-member").click(function(){
+        $(this).toggleClass("selected")
+        var id = $(this).attr("playerId")
+        var missionMemberNum = _this.currentMission.numMembers
+
+        if($(".select-mission-member.selected").length === missionMemberNum) {
+          $("button.send-on-mission").removeAttr("disabled")
+        }
+        else {
+          $("button.send-on-mission").attr("disabled", "disabled")
+        }
+      })
+
+      $(".send-on-mission").click(function(){
+        _this.executeMission()
+      })
+    },
+
+    executeMission: function() {
+      _.each($(".select-mission-member.selected"), function(el){
+        var player = App.current.players.get($(el).attr("playerId"))
+        this.currentMission.members.push(player)
+      }
+
+    },
   })
 
   App.Models.Mission = Backbone.Model.extend({
@@ -71,6 +106,7 @@ $(document).ready(function(){
       this.missionNum = missionData.missionNum
       this.failsRequired = this.failsRequired()
       this.numMembers = window.missionNumbers[App.current.game.numPlayers][this.missionNum]
+      this.members = []
     },
 
     failsRequired: function() {
@@ -82,6 +118,19 @@ $(document).ready(function(){
         failsRequired = 2
       }
       return failsRequired
+    },
+
+    missionSuccessVote: function(player) {
+      var buttons = ["<button class='btn btn-primary mission-success'>SUCCESS</button><br/>",
+                      "<button class='btn btn-primary mission-failure'>FAILURE</button><br/>"]
+      _.shuffle(buttons, function(button){
+        $(".mission-success-failure-buttons").append(button)
+      })
+
+      $(".mission-success, .mission-failure").click(function(){
+        $(this).toggleClass('voted')
+        $(".submit-vote").toggle()
+      }
     }
   })
 
@@ -120,10 +169,9 @@ $(document).ready(function(){
 
     displayIdentities: function(){
       if(this.displayOrder === this.models.length + 1) {
-        debugger
         $(".find-out").hide()
-        App.current.game.startRound()
         this.currentLeader = this.get(1)
+        App.current.game.startRound()
       }
       else {
         this.get(this.displayOrder).displayIdentity()

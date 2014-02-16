@@ -67,9 +67,9 @@
         <div>
           Rejection Count is currently <span class='rejection-count'></span>. Five rejections and spies automatically win.
         </div>
-        <p>
+        <h3>
           Mission <span class='mission-number'></span>: <span class='mission-players-num'></span> players
-        </p>
+        </h3>
         <p>
           Mission requires <span class='fails-required'></span> fails. Wink wink, you spies.
         </p>
@@ -84,13 +84,21 @@
       </div>
 
       <div class="select-mission-members">
-        Select players to go on this mission:
-        <ul id='mission-players-list'>
-        </ul>
-        <button class='btn btn-primary' disabled='disabled'></button>
+        Select the <span class='mission-member-count'></span> players to go on this mission:
+        <div id='mission-players-list'>
+        </div>
+        <button class='btn btn-primary send-on-mission' disabled='disabled'>Send'em on the mission</button>
       </div>
 
-      <div class="mission-approve">
+      <div class="mission-voting">
+        <h3><span class="voting-player-name"></span>, choose to succeed or fail this mission</h3>
+
+        <div class='mission-success-failure-buttons'>
+          <button class='btn btn-primary'>SUCCESS</button><br/>
+          <button class='btn btn-primary'>FAILURE</button><br/>
+        </div>
+
+        <button class='btn btn-primary submit-vote'>Submit your vote</button>
       </div>
 
 
