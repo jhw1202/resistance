@@ -1,78 +1,131 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Resistance by jhw1202</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
+    <link rel="stylesheet" type="text/css" href="stylesheets/this-is-a-stylesheet.css">
+
+    <script type="text/javascript" src = "javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/underscore.js"></script>
+    <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="javascripts/backbone.min.js"></script>
+
+    <script type="text/javascript" src="javascripts/missionPlayerNumbers.js"></script>
+    <script type="text/javascript" src="javascripts/ui.js"></script>
+    <script type="text/javascript" src="javascripts/game.js"></script>
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/jhw1202/resistance">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/jhw1202/resistance/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/jhw1202/resistance/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+    <div class="container text-center">
+      <div class='landing'>
+        <h1>Resistance</h1>
+        <button id="start-game" class="btn btn-primary">Shall we begin?</button>
+      </div>
 
-    <div class="wrapper">
+      <div class='num-of-players'>
+        <h1>How many players?</h1>
+        <select id="num-players">
+          <option value=5>5</option>
+          <option value=6>6</option>
+          <option value=7>7</option>
+          <option value=8>8</option>
+          <option value=9>9</option>
+          <option value=10>10</option>
+        </select>
+        <button id='submit-num-players' class= 'btn btn-primary'>Continue</button>
+      </div>
 
-      <section>
-        <div id="title">
-          <h1>Resistance</h1>
-          <p>super quick and dirty app to play Resistance (the board game) without the board</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/jhw1202">jhw1202</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+      <div class="player-names">
+        <h1>Enter player names in clockwise order, hit return</h1>
+        <div>
+          <div id="player-names">
+            <ul id="names-list">
+
+            </ul>
+          </div>
+          <label>Name</label>
+          <input type='text' id='player-name'></input>
         </div>
 
+        <button class='btn btn-primary' id="names-entered">Continue</button>
+      </div>
+
+      <div class="find-out">
+        <h1><span class='name'></span>, find out your identity</h1>
+
+        <div class="individual-identity">
+          <button class='btn btn-danger reveal-identity'>Click here if you dare</button>
+          <p class='identity'>
+            <p>When you're done, click Continue and pass to the player to the left.</p>
+          </p>
+
+          <button class='btn btn-primary pass-to-left'>Continue</button>
+        </div>
+      </div>
+
+      <div class="mission-vote">
+        <div>
+          Rejection Count is currently <span class='rejection-count'></span>. Five rejections and spies automatically win.
+        </div>
+        <div>
+          Resistance Score: <span class='resistance-score'></span>, Spy Score: <span class='spy-score'></span>
+        </div>
         <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+          Mission <span class='mission-number'></span>: <span class='mission-players-num'></span> players
+        </h3>
+        <p>
+          Mission requires <span class='fails-required'></span> fails. Wink wink, you spies.
+        </p>
+        <p>
+          <span class="mission-leader"></span> is the leader of this mission. Choose the players who you trust for this mission.
+        </p>
+        <p>
+          Does the group approve?
+        </p>
+        <button class='btn btn-primary mission-yes'>Yay</button>
+        <button class='btn btn-danger mission-no'>Nay</button>
+      </div>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+      <div class="select-mission-members">
+        Select the <span class='mission-member-count'></span> players to go on this mission:
+        <div id='mission-players-list'>
+        </div>
+        <button class='btn btn-primary send-on-mission' disabled='disabled'>Send'em on the mission</button>
+      </div>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+      <div class="mission-voting">
+        <h3><span class="voting-player-name"></span>, choose to succeed or fail this mission</h3>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+        <div class='mission-success-failure-buttons'>
+          <button class='btn btn-primary'>SUCCESS</button><br/>
+          <button class='btn btn-primary'>FAILURE</button><br/>
+        </div>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+        <button class='btn btn-primary submit-vote'>Submit your vote</button>
+      </div>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+      <div class='mission-result'>
+        <p>Drumrolls please...</p>
+        <p>
+          Mission <span class='mission-result-is'></span>!
+        </p>
+        <p>
+          <span class='success-votes-count'></span> success votes and <span class='fail-votes-count'></span> fail votes
+        </p>
+        <br/>
+        <button class='btn btn-primary next-round'>Continue</button>
+      </div>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-
+      <div class='game-result'>
+        <div class='spy-won'>
+        <img src="http://i.imgur.com/kiZ1pJx.jpg">
+        <h3>Everyday I'm hustlin</h3>
+        </div>
+        <div class='resistance-won'>
+          <img src="http://i.imgur.com/4oxxMri.jpg">
+          <h3>And I would have gotten away with it too, if it weren't for you meddling kids</h3>
+        </div>
+      </div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
   </body>
 </html>
