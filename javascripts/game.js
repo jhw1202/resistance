@@ -156,6 +156,9 @@ $(document).ready(function(){
       else if(missionNum === 4) {
         failsRequired = 2
       }
+      else {
+        failsRequired = 1
+      }
       return failsRequired
     },
 
