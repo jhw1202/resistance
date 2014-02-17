@@ -48,12 +48,14 @@ $(document).ready(function(){
       this.missionCount++
       $(".mission-vote").show()
       this.currentMission = new App.Models.Mission({missionNum: this.missionCount})
-      var currentLeader = App.current.players.currentLeader
+      var currentLeader = App.current.players.incrementLeader()
       $(".rejection-count").text(this.rejectionCount)
       $(".mission-number").text(this.missionCount)
       $(".mission-players-num").text(this.currentMission.numMembers)
       $(".fails-required").text(this.currentMission.failsRequired)
       $(".mission-leader").text(currentLeader.name)
+      $(".resistance-score").text(this.resistanceScore)
+      $(".spy-score").text(this.spyScore)
     },
 
     continueRound: function() {
@@ -65,8 +67,11 @@ $(document).ready(function(){
     },
 
     missionApproved: function() {
+      this.resetRejection()
       var _this = this
       $(".mission-vote").hide()
+      $("#mission-players-list").html('')
+      $("button.send-on-mission").attr("disabled", "disabled")
       $(".select-mission-members").show()
       $(".mission-member-count").text(this.currentMission.numMembers)
       _.each(App.current.players.models, function(player){
@@ -86,19 +91,51 @@ $(document).ready(function(){
           $("button.send-on-mission").attr("disabled", "disabled")
         }
       })
-
-      $(".send-on-mission").click(function(){
-        _this.executeMission()
-      })
     },
 
     executeMission: function() {
+      var _this = this
+      var mission = this.currentMission
+      $(".select-mission-members").hide()
+      $(".mission-voting").show()
       _.each($(".select-mission-member.selected"), function(el){
         var player = App.current.players.get($(el).attr("playerId"))
-        this.currentMission.members.push(player)
-      }
-
+        mission.members.push(player)
+      })
+      mission.missionSuccessVote(0)
     },
+
+    showMissionResult: function() {
+      var _this = this
+      $(".mission-voting").hide()
+      $(".mission-result").show()
+      setTimeout(function(){
+        $(".mission-result-is").text(_this.currentMission.result())
+        $(".success-votes-count").text(_this.currentMission.successVotes)
+        $(".fail-votes-count").text(_this.currentMission.failVotes)
+      }, 1200)
+    },
+
+    isFinished: function() {
+      if(this.resistanceScore === 3 || this.spyScore === 3 || this.rejectionCount === 5) {
+        return true
+      }
+    },
+
+    setWinner: function() {
+      if (this.spyScore === 3 || this.rejectionCount === 5) this.winner = "Spies"
+      else this.winner = "Resistance"
+    },
+
+    showWinner: function() {
+      this.setWinner()
+      if (this.winner === "Spies") {
+        $(".spy-won").show()
+      }
+      else {
+        $(".resistance-won").show()
+      }
+    }
   })
 
   App.Models.Mission = Backbone.Model.extend({
@@ -107,6 +144,8 @@ $(document).ready(function(){
       this.failsRequired = this.failsRequired()
       this.numMembers = window.missionNumbers[App.current.game.numPlayers][this.missionNum]
       this.members = []
+      this.successVotes = 0
+      this.failVotes = 0
     },
 
     failsRequired: function() {
@@ -120,17 +159,63 @@ $(document).ready(function(){
       return failsRequired
     },
 
-    missionSuccessVote: function(player) {
-      var buttons = ["<button class='btn btn-primary mission-success'>SUCCESS</button><br/>",
-                      "<button class='btn btn-primary mission-failure'>FAILURE</button><br/>"]
-      _.shuffle(buttons, function(button){
+    result: function(){
+      var result
+      if(this.failVotes > 0 && this.failVotes >= this.failsRequired){
+        result = "Fail"
+        App.current.game.spyScore++
+      }
+      else{
+        result = "Success"
+        App.current.game.resistanceScore++
+      }
+      return result
+    },
+
+    missionSuccessVote: function(voterIndex) {
+      var _this = this
+      var voter = this.members[voterIndex]
+      $(".mission-success-failure-buttons").html('')
+      $(".voting-player-name").text(voter.name)
+      var buttons = ["<button class='btn btn-primary mission-success'>SUCCESS</button><br/><br/>",
+                      "<button class='btn btn-primary mission-failure'>FAILURE</button><br/><br/>"]
+
+      _.each(_.shuffle(buttons), function(button) {
         $(".mission-success-failure-buttons").append(button)
       })
 
+      if (voter.identity === "resistance"){
+        $(".mission-failure").attr("disabled", true)
+      }
+
       $(".mission-success, .mission-failure").click(function(){
         $(this).toggleClass('voted')
-        $(".submit-vote").toggle()
-      }
+        if ($(".voted").length === 1){
+          $(".submit-vote").show()
+        }
+        else{
+          $(".submit-vote").hide()
+        }
+      })
+
+      $(".submit-vote").unbind("click")
+
+      $(".submit-vote").click(function(e){
+        if($(".mission-success.voted").length === 1){
+          _this.successVotes++
+        }
+        else {
+          _this.failVotes++
+        }
+
+        if(voterIndex === _this.members.length-1) {
+          App.current.game.showMissionResult()
+        }
+        else{
+          var nextIndex = voterIndex+1
+          _this.missionSuccessVote(nextIndex)
+        }
+      })
     }
   })
 
@@ -165,12 +250,13 @@ $(document).ready(function(){
         i++
       })
       this.displayOrder = 1
+      this.currentLeader = null
     },
 
     displayIdentities: function(){
       if(this.displayOrder === this.models.length + 1) {
         $(".find-out").hide()
-        this.currentLeader = this.get(1)
+        this.currentLeader = null
         App.current.game.startRound()
       }
       else {
@@ -179,7 +265,10 @@ $(document).ready(function(){
       }
     },
     incrementLeader: function(){
-      if(this.currentLeader.id === this.models.length){
+      if(this.currentLeader === null) {
+        this.currentLeader = this.models[0]
+      }
+      else if(this.currentLeader.id === this.models.length){
         this.currentLeader = this.get(1)
       }
       else {

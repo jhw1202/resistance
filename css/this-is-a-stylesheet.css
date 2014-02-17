@@ -8,6 +8,10 @@
   text-align: center;
 }
 
+.img{
+  width: 80%;
+}
+
 #start-game{
   margin-top: 96px;
 }
@@ -54,4 +58,16 @@ button.submit-vote {
 .voted {
   font-weight: bold;
   font-size: 1.6em;
+}
+
+.mission-leader{
+  font-weight: bold;
+}
+
+.spy-won, .resistance-won {
+  display: none;
+}
+
+.mission-result-is {
+  font-weight: bold;
 }

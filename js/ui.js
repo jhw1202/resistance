@@ -61,4 +61,23 @@ $(document).ready(function(){
     App.current.game.missionApproved()
   })
 
+  $(".send-on-mission").click(function(){
+    App.current.game.executeMission()
+  })
+
+  $(".next-round").click(function(){
+    $(".mission-result").hide()
+    $(".mission-result-is").text('')
+    $(".success-votes-count").text('')
+    $(".fail-votes-count").text('')
+
+    if(App.current.game.isFinished()) {
+      $(".game-result").show()
+      App.current.game.showWinner()
+    }
+    else {
+      App.current.game.startRound()
+    }
+  })
+
 })
