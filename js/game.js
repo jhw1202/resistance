@@ -46,7 +46,7 @@ $(document).ready(function(){
 
     startRound: function(){
       this.missionCount++
-      $(".mission-vote").show()
+      $(".mission-vote").showStep()
       this.currentMission = new App.Models.Mission({missionNum: this.missionCount})
       var currentLeader = App.current.players.incrementLeader()
       $(".rejection-count").text(this.rejectionCount)
@@ -69,10 +69,10 @@ $(document).ready(function(){
     missionApproved: function() {
       this.resetRejection()
       var _this = this
-      $(".mission-vote").hide()
+      $(".mission-vote").hideStep()
       $("#mission-players-list").html('')
       $("button.send-on-mission").attr("disabled", "disabled")
-      $(".select-mission-members").show()
+      $(".select-mission-members").showStep()
       $(".mission-member-count").text(this.currentMission.numMembers)
       _.each(App.current.players.models, function(player){
         $("#mission-players-list").append("<div class='select-mission-member' " + "playerId='" + player.id +
@@ -96,8 +96,8 @@ $(document).ready(function(){
     executeMission: function() {
       var _this = this
       var mission = this.currentMission
-      $(".select-mission-members").hide()
-      $(".mission-voting").show()
+      $(".select-mission-members").hideStep()
+      $(".mission-voting").showStep()
       _.each($(".select-mission-member.selected"), function(el){
         var player = App.current.players.get($(el).attr("playerId"))
         mission.members.push(player)
@@ -107,12 +107,14 @@ $(document).ready(function(){
 
     showMissionResult: function() {
       var _this = this
-      $(".mission-voting").hide()
-      $(".mission-result").show()
+      $(".mission-voting").hideStep()
+      $(".mission-result").showStep()
+      $(".next-round").hideStep()
       setTimeout(function(){
-        $(".mission-result-is").text(_this.currentMission.result())
+        $(".mission-result-is").text(_this.currentMission.result() + "!")
         $(".success-votes-count").text(_this.currentMission.successVotes)
         $(".fail-votes-count").text(_this.currentMission.failVotes)
+        $(".next-round").showStep()
       }, 1200)
     },
 
@@ -130,10 +132,10 @@ $(document).ready(function(){
     showWinner: function() {
       this.setWinner()
       if (this.winner === "Spies") {
-        $(".spy-won").show()
+        $(".spy-won").showStep()
       }
       else {
-        $(".resistance-won").show()
+        $(".resistance-won").showStep()
       }
     }
   })
@@ -191,10 +193,10 @@ $(document).ready(function(){
       $(".mission-success, .mission-failure").click(function(){
         $(this).toggleClass('voted')
         if ($(".voted").length === 1){
-          $(".submit-vote").show()
+          $(".submit-vote").showStep()
         }
         else{
-          $(".submit-vote").hide()
+          $(".submit-vote").hideStep()
         }
       })
 
@@ -229,12 +231,12 @@ $(document).ready(function(){
     displayIdentity: function() {
       $(".find-out .name").text(this.name)
       $("p.identity").text("You are a " + this.identity)
-      $(".find-out").show()
-      $(".reveal-identity").show()
+      $(".find-out").showStep()
+      $(".reveal-identity").showStep()
 
       $(".reveal-identity").click(function(){
-        $(this).hide()
-        $("p.identity").show()
+        $(this).hideStep()
+        $("p.identity").showStep()
       })
     }
   })
@@ -255,7 +257,7 @@ $(document).ready(function(){
 
     displayIdentities: function(){
       if(this.displayOrder === this.models.length + 1) {
-        $(".find-out").hide()
+        $(".find-out").hideStep()
         this.currentLeader = null
         App.current.game.startRound()
       }

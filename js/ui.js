@@ -5,18 +5,27 @@ App.Collections = {}
 App.current = {}
 
 $(document).ready(function(){
+  $.fn.showStep = function() {
+    var _this = this
+    setTimeout(function(){$(_this).show("slide", {direction: "right"})}, 500)
+  }
+
+  $.fn.hideStep = function() {
+    $(this).hide("slide", {direction: "left"})
+  }
+
   $(".landing").show()
 
   $("#start-game").click(function(){
-    $('.landing').hide()
-    $(".num-of-players").show()
+    $('.landing').hideStep()
+    $(".num-of-players").showStep()
   })
 
   $("#submit-num-players").click(function(){
-    $(".num-of-players").hide()
+    $(".num-of-players").hideStep()
     var numPlayers = parseInt($("#num-players option:selected").val())
     App.current.game = new App.Models.Game({numPlayers: numPlayers})
-    $(".player-names").show()
+    $(".player-names").showStep()
     App.current.players = new App.Collections.Players()
   })
 
@@ -36,7 +45,7 @@ $(document).ready(function(){
   })
 
   $("#names-entered").click(function(){
-    $(".player-names").hide()
+    $(".player-names").hideStep()
     App.current.players.createSpies(App.current.game.numSpies)
     var players = _.sortBy(App.current.players.models, function(player){
       player.id
@@ -48,7 +57,7 @@ $(document).ready(function(){
       $(".find-out .name").text('')
       $("p.identity").text('')
       $("p.identity").hide()
-      $(".find-out").hide()
+      $(".find-out").hideStep()
       App.current.players.displayIdentities()
     })
   })
@@ -66,13 +75,13 @@ $(document).ready(function(){
   })
 
   $(".next-round").click(function(){
-    $(".mission-result").hide()
+    $(".mission-result").hideStep()
     $(".mission-result-is").text('')
     $(".success-votes-count").text('')
     $(".fail-votes-count").text('')
 
     if(App.current.game.isFinished()) {
-      $(".game-result").show()
+      $(".game-result").showStep()
       App.current.game.showWinner()
     }
     else {
